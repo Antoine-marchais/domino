@@ -6,4 +6,4 @@ Nous proposons ici une version numérique du jeu, qui s'appuie sur les technique
 
 ## Installation
 
-Le projet est réalisé en java, les dépendances et le build sont gérés par Maven.
+Le projet est réalisé en java, les dépendances et le build sont gérés par Maven. Pour une aide sur la mise en place du projet, veuillez consulter la documentation Apache sur [Maven](https://maven.apache.org/guides/getting-started/index.html)

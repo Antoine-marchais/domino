@@ -25,10 +25,10 @@ class Snake {
     void layRightEnd(Domino domino) throws InvalidMoveException{
         if (dominoes.size() == 0){
             dominoes.addLast(domino);
-            rightValue = domino.values[0];
-            leftValue = domino.values[1];
+            rightValue = domino.values[1];
+            leftValue = domino.values[0];
         } else {
-            if (Arrays.asList(domino.values).contains(rightValue)) {
+            if (domino.values[0] == rightValue || domino.values[1] == rightValue) {
                 dominoes.addLast(domino);
                 rightValue = domino.values[0] == rightValue ? domino.values[1] : domino.values[0];
             } else {
@@ -40,10 +40,10 @@ class Snake {
     void layLeftEnd(Domino domino) throws InvalidMoveException {
         if (dominoes.size() == 0){
             dominoes.addFirst(domino);
-            rightValue = domino.values[0];
-            leftValue = domino.values[1];
+            rightValue = domino.values[1];
+            leftValue = domino.values[0];
         } else {
-            if (Arrays.asList(domino.values).contains(leftValue)) {
+            if (domino.values[0] == leftValue || domino.values[1] == leftValue) {
                 dominoes.addFirst(domino);
                 leftValue = domino.values[0] == leftValue ? domino.values[1] : domino.values[0];
             } else {

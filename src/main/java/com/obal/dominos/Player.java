@@ -9,5 +9,6 @@ public class Player {
 
     public Domino playNextMove(Snake snake){
         //TODO
+        return new Domino(new int[]{0,0});
     }
 }

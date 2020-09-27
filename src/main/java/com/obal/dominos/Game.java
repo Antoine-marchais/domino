@@ -1,5 +1,6 @@
 package com.obal.dominos;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -9,10 +10,9 @@ public class Game {
     static final byte DOMINO_MAX = 6;
     static final byte DOMINO_MIN = 0;
     static final byte DRAW_SIZE = 7;
-    public Player firstPlayer;
-    public Player secondPlayer;
-    public Player thirdPlayer;
-    public Snake snake;
+    private ArrayList<Player> players;
+    private int player_index;
+    private Snake snake;
 
     public Game(){
         // Build the deck
@@ -35,10 +35,38 @@ public class Game {
             deck.removeFirst();
             playerThreeHand.addDomino(deck.getFirst());
             deck.removeFirst();
-        }
-        firstPlayer = new Player(playerOneHand);
-        secondPlayer = new Player(playerTwoHand);
-        thirdPlayer = new Player(playerThreeHand);
+        }   
+
+        players = new ArrayList<Player>();
+        players.add(new HumanPlayer(playerOneHand));
+        players.add(new HumanPlayer(playerTwoHand));
+        players.add(new HumanPlayer(playerThreeHand));
+        player_index = 0;
         snake = new Snake();
+    }
+
+    public void start(){
+        boolean ending = false;
+        while (!ending){
+            nextTurn();
+        }
+    }
+
+    private void nextTurn(){
+        System.out.println(String.format("\nPlayer %s turn. Current snake : %s", player_index+1, snake));
+        Player player = players.get(player_index);
+        player_index = (player_index + 1)%3;
+        boolean correct_move = false;
+        while (!correct_move){
+            try {
+                Move next_move = player.playNextMove(snake);
+                if (next_move.side == Move.Side.LEFT) snake.layLeftEnd(next_move.domino);
+                else snake.layRightEnd(next_move.domino);
+                player.removeDomino(next_move.domino);
+                correct_move = true;
+            } catch (InvalidMoveException e){
+                System.out.println(String.format("Invalid move : %s", e.getMessage()));
+            }
+        }
     }
 }

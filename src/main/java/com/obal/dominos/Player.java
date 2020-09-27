@@ -8,4 +8,8 @@ public abstract class Player {
     }
 
     public abstract Move playNextMove(Snake snake);
+
+    public void removeDomino(Domino domino){
+        hand.dominoes.remove(domino);
+    }
 }

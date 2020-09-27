@@ -3,17 +3,18 @@ package com.obal.dominos;
 import java.util.Scanner;
 
 public class HumanPlayer extends Player {
+
+    private Scanner input;
     
     public HumanPlayer(Hand h) {
         super(h);
+        input = new Scanner(System.in);
     }
 
     @Override
     public Move playNextMove(Snake snake){
-        System.out.println(String.format("Current Snake : %s \n", snake));
-        System.out.println(String.format("Your hand : %s \n", hand));;
-        System.out.println("Which domino do you want to place ? (1-7)");
-        Scanner input = new Scanner(System.in);
+        System.out.println(String.format("Your hand : %s", hand));;
+        System.out.print("Which domino do you want to place (1-7) ? ");
         boolean domino_validation = false;
         Domino domino = null;
         while (!domino_validation){
@@ -23,24 +24,24 @@ public class HumanPlayer extends Player {
                 domino = hand.dominoes.get(domino_number-1);
                 domino_validation = true;
             } catch (Exception e){
-                System.out.println("Please input the index of one of your dominoes");
+                e.printStackTrace();
+                System.out.print("Please input the index of one of your dominoes : ");
             }
         }
 
-        System.out.println("On which side ? (L/R");
+        System.out.print("On which side (L/R) ? ");
         String side = "";
         boolean side_validation = false;
         while (!side_validation){
             try {
                 side = input.nextLine();
-                if (side != "L" && side != "R") throw new Exception();
-                domino_validation = true;
+                if (side.equals("L") && side.equals("R")) throw new Exception();
+                side_validation = true;
             } catch (Exception e){
-                System.out.println("You can only input characters L and R");
+                System.out.print("You can only input characters L and R : ");
             }
         }
-        input.close();
-        Move result = side == "L" ? new Move(domino, Move.Side.LEFT) : new Move(domino, Move.Side.RIGHT);
+        Move result = side.equals("L") ? new Move(domino, Move.Side.LEFT) : new Move(domino, Move.Side.RIGHT);
         return result;
     }
 }

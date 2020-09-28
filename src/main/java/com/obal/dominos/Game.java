@@ -1,6 +1,7 @@
 package com.obal.dominos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -29,12 +30,9 @@ public class Game {
         Hand playerTwoHand = new Hand();
         Hand playerThreeHand = new Hand();
         for (int i = 0; i < DRAW_SIZE; i++) {
-            playerOneHand.addDomino(deck.getFirst());
-            deck.removeFirst();
-            playerTwoHand.addDomino(deck.getFirst());
-            deck.removeFirst();
-            playerThreeHand.addDomino(deck.getFirst());
-            deck.removeFirst();
+            playerOneHand.addDomino(deck.pop());
+            playerTwoHand.addDomino(deck.pop());
+            playerThreeHand.addDomino(deck.pop());
         }   
 
         players = new ArrayList<Player>();
@@ -52,11 +50,22 @@ public class Game {
         }
     }
 
+    private boolean canPlay(Player player){
+        for (Domino domino : player.hand.dominoes) {
+            if (Arrays.stream(domino.values).anyMatch(v -> v == snake.getLeftValue()))
+                return true;
+            if (Arrays.stream(domino.values).anyMatch(v -> v == snake.getRightValue()))
+                return true;
+        }
+        return false;
+    }
+
     private void nextTurn(){
         System.out.println(String.format("\nPlayer %s turn. Current snake : %s", player_index+1, snake));
         Player player = players.get(player_index);
         player_index = (player_index + 1)%3;
         boolean correct_move = false;
+        System.out.println(canPlay(player));
         while (!correct_move){
             try {
                 Move next_move = player.playNextMove(snake);

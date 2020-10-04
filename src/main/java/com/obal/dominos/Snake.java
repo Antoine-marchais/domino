@@ -3,12 +3,18 @@ package com.obal.dominos;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * Representation of the dominoes laid on the board
+ */
 class Snake {
     // TODO : Find a better name for dominoes on the board haha
     LinkedList<Domino> dominoes;
     int rightValue;
     int leftValue;
 
+    /**
+     * Instantiates a new empty Snake
+     */
     public Snake(){
         dominoes = new LinkedList<Domino>();
     }
@@ -21,6 +27,11 @@ class Snake {
         return leftValue;
     }
 
+    /**
+     * Try to place a new domino on the right hand of the snake
+     * @param domino domino to place on the end of the snake
+     * @throws InvalidMoveException raises an exception if the domino does not match that end
+     */
     void layRightEnd(Domino domino) throws InvalidMoveException{
         if (dominoes.size() == 0){
             dominoes.addLast(domino);
@@ -36,6 +47,11 @@ class Snake {
         }
     }
 
+    /**
+     * Try to place a new domino on the left hand of the snake
+     * @param domino domino to place on the end of the snake
+     * @throws InvalidMoveException raises an exception if the domino does not match that end
+     */
     void layLeftEnd(Domino domino) throws InvalidMoveException {
         if (dominoes.size() == 0){
             dominoes.addFirst(domino);

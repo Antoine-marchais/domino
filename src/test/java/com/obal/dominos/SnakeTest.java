@@ -21,6 +21,9 @@ public class SnakeTest {
         }
     }
 
+    /**
+     * Checks that the addition of a correct domino updates the snake accordingly
+     */
     @Test
     public void testAddGood() {
         Snake snake = new Snake();
@@ -34,6 +37,9 @@ public class SnakeTest {
         }
     }
 
+    /**
+     * Checks that the addition of a wrong domino raises an exception
+     */
     @Test
     public void testAddBad() {
         Snake snake = new Snake();

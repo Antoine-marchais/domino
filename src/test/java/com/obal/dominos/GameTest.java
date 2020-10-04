@@ -16,6 +16,9 @@ public class GameTest {
     public Field playersField;
     public Field snakeField;
 
+    /**
+     * Test fixture : we create a seeded game and extract the players and snake using reflection
+     */
     @Before
     public void createGame(){
         try{
@@ -34,12 +37,18 @@ public class GameTest {
         //for (Player p:players) System.out.println(p.hand);
     }
 
+    /**
+     * Checks that the player with the least points in his hand wins
+     */
     @Test
     public void checkScoreTest(){
         int winningIndex = game.checkScores();
         Assert.assertEquals(winningIndex, 2);
     }
 
+    /**
+     * Checks that pass functions correctly
+     */
     @Test
     public void triplePassTest(){
         try{

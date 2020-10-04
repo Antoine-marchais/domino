@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+/**
+ * Brings players and snake together and implement the game logic
+ */
 public class Game {
     
     //CTS
@@ -22,15 +25,26 @@ public class Game {
         WIN
     }
 
+    /**
+     * Instantiates a new random Game
+     */
     public Game(){
         int seed = new Random().nextInt();
         setupGame(seed);
     }
 
+    /**
+     * Instantiates a new game from the given seed
+     * @param seed seed to use for the hand distribution
+     */
     public Game(int seed){
         setupGame(seed);
     }
 
+    /**
+     * sets up the game with the the given seed
+     * @param seed
+     */
     private void setupGame(int seed){
         // Build the deck
         LinkedList<Domino> deck = new LinkedList<>();
@@ -59,12 +73,16 @@ public class Game {
         snake = new Snake();
     }
 
+    /**
+     * Start the game and prompts player for their turn while no end game condition is met
+     */
     public void start(){
         boolean ending = false;
         int pass_count = 0;
         while (!ending){
             switch (nextTurn()){
                 case PASS:
+                    // if three players pass, nobody can play and the game should end
                     pass_count++;
                     if (pass_count == 3){
                         ending=true;
@@ -83,6 +101,10 @@ public class Game {
         System.out.println(String.format("Player %s won", winningPlayerIndex));
     }
 
+    /**
+     * Calculate player hand values and returns the player with the lowest hand value. and empty hand has value 0
+     * @return index of the player with lowest hand value
+     */
     public int checkScores(){
         int[] sortedIndices = IntStream
             .range(0, players.size())
@@ -91,6 +113,11 @@ public class Game {
         return sortedIndices[0]; 
     }
 
+    /**
+     * Checks wether a player has any domino he can add to the snake
+     * @param player the player we are running the check for
+     * @return true if the player can play
+     */
     private boolean canPlay(Player player){
         for (Domino domino : player.hand.dominoes) {
             if (Arrays.stream(domino.values).anyMatch(v -> v == snake.getLeftValue()))
@@ -101,15 +128,23 @@ public class Game {
         return false;
     }
 
+    /**
+     * Checks the player can play, and if he can, prompts the player for next move, and updates the snake
+     * @return PASS if no move is possible, WIN if the player finishes his hand, PLAY otherwise
+     */
     private TurnResult nextTurn(){
         System.out.println(String.format("\nPlayer %s turn. Current snake : %s", player_index+1, snake));
         Player player = players.get(player_index);
         player_index = (player_index + 1)%3;
         boolean correct_move = false;
+
+        //Pass if the player can't play
         if (!canPlay(player)){
             System.out.println("PASS");
             return TurnResult.PASS;
         }
+
+        //prompts for the move and checks that the move can be layed on the snake
         while (!correct_move){
             try {
                 Move next_move = player.playNextMove(snake);

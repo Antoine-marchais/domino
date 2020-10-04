@@ -2,21 +2,35 @@ package com.obal.dominos;
 
 import java.util.Scanner;
 
+/**
+ * Implementation of a Player with a CLI to input next move
+ */
 public class HumanPlayer extends Player {
 
     private Scanner input;
     
+    /**
+     * Instanciates a Human player with a new hand and an input scanner
+     * @param h hand to use for the player
+     */
     public HumanPlayer(Hand h) {
         super(h);
         input = new Scanner(System.in);
     }
 
+    /**
+     * prompts the player for his next move, displaying the current snake and current hand
+     * @param snake the current snake of the game
+     * @return      the move chosen by the player
+     */
     @Override
     public Move playNextMove(Snake snake){
         System.out.println(String.format("Your hand : %s", hand));;
         System.out.print("Which domino do you want to place (1-7) ? ");
         boolean domino_validation = false;
         Domino domino = null;
+
+        // We ask for the domino index, with validation
         while (!domino_validation){
             try {
                 int domino_number = Integer.parseInt(input.nextLine());
@@ -31,6 +45,7 @@ public class HumanPlayer extends Player {
 
         System.out.print("On which side (L/R) ? ");
         String side = "";
+        // We ask for the domino side, with validation
         boolean side_validation = false;
         while (!side_validation){
             try {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class Game {
     
@@ -14,6 +16,11 @@ public class Game {
     private ArrayList<Player> players;
     private int player_index;
     private Snake snake;
+    private enum TurnResult{
+        PASS,
+        PLAY,
+        WIN
+    }
 
     public Game(){
         // Build the deck
@@ -45,9 +52,34 @@ public class Game {
 
     public void start(){
         boolean ending = false;
+        int pass_count = 0;
         while (!ending){
-            nextTurn();
+            switch (nextTurn()){
+                case PASS:
+                    pass_count++;
+                    if (pass_count == 3){
+                        ending=true;
+                    }
+                    break;
+                case WIN:
+                    ending = true;
+                    break;
+                case PLAY:
+                    pass_count = 0;
+                    break;
+            }
         }
+        System.out.println("\nGame over !");
+        int winningPlayerIndex = checkScores();
+        System.out.println(String.format("Player %s won", winningPlayerIndex));
+    }
+
+    public int checkScores(){
+        int[] sortedIndices = IntStream
+            .range(0, players.size())
+            .boxed().sorted((i, j) -> Player.HandComparator.compare(players.get(i), players.get(j)))
+            .mapToInt(ele -> ele).toArray();
+        return sortedIndices[0]; 
     }
 
     private boolean canPlay(Player player){
@@ -60,12 +92,15 @@ public class Game {
         return false;
     }
 
-    private void nextTurn(){
+    private TurnResult nextTurn(){
         System.out.println(String.format("\nPlayer %s turn. Current snake : %s", player_index+1, snake));
         Player player = players.get(player_index);
         player_index = (player_index + 1)%3;
         boolean correct_move = false;
-        System.out.println(canPlay(player));
+        if (!canPlay(player)){
+            System.out.println("PASS");
+            return TurnResult.PASS;
+        }
         while (!correct_move){
             try {
                 Move next_move = player.playNextMove(snake);
@@ -76,6 +111,11 @@ public class Game {
             } catch (InvalidMoveException e){
                 System.out.println(String.format("Invalid move : %s", e.getMessage()));
             }
+        }
+        if (player.hand.dominoes.size() == 0){
+            return TurnResult.WIN;
+        } else {
+            return TurnResult.PLAY;
         }
     }
 }

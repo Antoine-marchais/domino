@@ -15,7 +15,6 @@ public class SnakeTest {
         Snake snake = new Snake();
         try {
             snake.layLeftEnd(firstDomino);
-            System.out.println(snake);
             Assert.assertEquals(snake.dominoes.getFirst(), firstDomino);
         } catch (InvalidMoveException e){
             Assert.fail("Shouldn't have raised an exception");
@@ -28,7 +27,6 @@ public class SnakeTest {
         try {
             snake.layLeftEnd(firstDomino);
             snake.layRightEnd(secondGoodDomino);
-            System.out.println(snake);
             Assert.assertEquals(snake.leftValue, 3);
             Assert.assertEquals(snake.rightValue, 5);
         } catch (InvalidMoveException e){
@@ -46,6 +44,5 @@ public class SnakeTest {
         } catch (InvalidMoveException e) {
             
         }
-
     }
 }

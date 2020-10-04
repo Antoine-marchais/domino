@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.UUID;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 public class Game {
@@ -16,13 +16,22 @@ public class Game {
     private ArrayList<Player> players;
     private int player_index;
     private Snake snake;
-    private enum TurnResult{
+    public enum TurnResult{
         PASS,
         PLAY,
         WIN
     }
 
     public Game(){
+        int seed = new Random().nextInt();
+        setupGame(seed);
+    }
+
+    public Game(int seed){
+        setupGame(seed);
+    }
+
+    private void setupGame(int seed){
         // Build the deck
         LinkedList<Domino> deck = new LinkedList<>();
         for (int i = DOMINO_MIN; i <= DOMINO_MAX; i++) {
@@ -32,7 +41,7 @@ public class Game {
             }
         }
         // Draw hands
-        Collections.shuffle(deck);
+        Collections.shuffle(deck, new Random(seed));
         Hand playerOneHand = new Hand();
         Hand playerTwoHand = new Hand();
         Hand playerThreeHand = new Hand();

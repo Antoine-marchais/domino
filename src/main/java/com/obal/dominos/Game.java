@@ -63,14 +63,42 @@ public class Game {
             playerOneHand.addDomino(deck.pop());
             playerTwoHand.addDomino(deck.pop());
             playerThreeHand.addDomino(deck.pop());
-        }   
-
+        }
         players = new ArrayList<Player>();
         players.add(new HumanPlayer(playerOneHand));
         players.add(new HumanPlayer(playerTwoHand));
         players.add(new HumanPlayer(playerThreeHand));
-        player_index = 0;
         snake = new Snake();
+
+        // Who starts?
+        player_index = 0;
+        int[] lookFor = {DOMINO_MAX, DOMINO_MAX};
+        boolean foundFirst = false;
+        while(!foundFirst) {
+            for (Player player : players) {
+                for (Domino domino : player.hand.dominoes) {
+                    if (Arrays.equals(domino.values, lookFor)) {
+                        System.out.println(String.format("%s is in the hand of the %dth player, he start.",
+                                domino.toString(), player_index + 1));
+                        foundFirst = true;
+                        break;
+                    }
+                }
+                if (foundFirst != true) {
+                    player_index = (player_index + 1) % 3;
+                } else {
+                    break;
+                }
+            }
+            if (foundFirst != true) {
+                if (Arrays.stream(lookFor).anyMatch(i -> i == DOMINO_MIN)) {
+                    // TODO : set a rule to pick the first player if none of the doubles were drawn
+                    System.out.println("No double found, first player starts.");
+                    foundFirst = true;
+                }
+                lookFor = Arrays.stream(lookFor).map(i -> i - 1).toArray();
+            }
+        }
     }
 
     /**
@@ -114,11 +142,13 @@ public class Game {
     }
 
     /**
-     * Checks wether a player has any domino he can add to the snake
+     * Checks whether a player has any domino he can add to the snake
      * @param player the player we are running the check for
      * @return true if the player can play
      */
     private boolean canPlay(Player player){
+        if (snake.dominoes.size() == 0)
+            return true;
         for (Domino domino : player.hand.dominoes) {
             if (Arrays.stream(domino.values).anyMatch(v -> v == snake.getLeftValue()))
                 return true;

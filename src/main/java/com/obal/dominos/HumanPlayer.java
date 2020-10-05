@@ -25,8 +25,9 @@ public class HumanPlayer extends Player {
      */
     @Override
     public Move playNextMove(Snake snake){
-        System.out.println(String.format("Your hand : %s", hand));;
-        System.out.print("Which domino do you want to place (1-7) ? ");
+        int handSize = hand.dominoes.size();
+        System.out.println(String.format("Your hand : %s", hand));
+        System.out.print(String.format("Which domino do you want to place (1-%s) ? ", handSize));
         boolean domino_validation = false;
         Domino domino = null;
 
@@ -50,7 +51,7 @@ public class HumanPlayer extends Player {
         while (!side_validation){
             try {
                 side = input.nextLine();
-                if (side.equals("L") && side.equals("R")) throw new Exception();
+                if (!side.equals("L") && !side.equals("R")) throw new Exception();
                 side_validation = true;
             } catch (Exception e){
                 System.out.print("You can only input characters L and R : ");

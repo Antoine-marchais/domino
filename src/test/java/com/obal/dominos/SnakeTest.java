@@ -15,20 +15,21 @@ public class SnakeTest {
         Snake snake = new Snake();
         try {
             snake.layLeftEnd(firstDomino);
-            System.out.println(snake);
             Assert.assertEquals(snake.dominoes.getFirst(), firstDomino);
         } catch (InvalidMoveException e){
             Assert.fail("Shouldn't have raised an exception");
         }
     }
 
+    /**
+     * Checks that the addition of a correct domino updates the snake accordingly
+     */
     @Test
     public void testAddGood() {
         Snake snake = new Snake();
         try {
             snake.layLeftEnd(firstDomino);
             snake.layRightEnd(secondGoodDomino);
-            System.out.println(snake);
             Assert.assertEquals(snake.leftValue, 3);
             Assert.assertEquals(snake.rightValue, 5);
         } catch (InvalidMoveException e){
@@ -36,6 +37,9 @@ public class SnakeTest {
         }
     }
 
+    /**
+     * Checks that the addition of a wrong domino raises an exception
+     */
     @Test
     public void testAddBad() {
         Snake snake = new Snake();
@@ -46,6 +50,5 @@ public class SnakeTest {
         } catch (InvalidMoveException e) {
             
         }
-
     }
 }

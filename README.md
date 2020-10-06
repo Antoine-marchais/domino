@@ -7,3 +7,26 @@ Nous proposons ici une version numérique du jeu, qui s'appuie sur les technique
 ## Installation
 
 Le projet est réalisé en java, les dépendances et le build sont gérés par Maven. Pour une aide sur la mise en place du projet, veuillez consulter la documentation Apache sur [Maven](https://maven.apache.org/guides/getting-started/index.html)
+
+---
+## TODO
+
+### CLI implementation
+
+- Add first player selection (player with highest double starts)
+- Implement Pass move
+- Add end game conditions
+- Add multiple rounds to a game
+- Comments everywhere
+
+### AI Player
+
+- Implement a first player (To be refined)
+
+### GUI
+
+- Design Interface
+
+### Network
+
+- Move App to a server, Embed Human players in a client

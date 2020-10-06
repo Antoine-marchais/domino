@@ -22,5 +22,11 @@ public class Move {
         side = s;
         domino = d;
     }
+
+    @Override
+    public String toString(){
+        String textSide = (side == Side.LEFT) ? "Left" : "Right";
+        return String.format("%s - %s", domino, textSide);
+    }
     
 }

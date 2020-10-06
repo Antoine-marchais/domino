@@ -65,9 +65,9 @@ public class Game {
             playerThreeHand.addDomino(deck.pop());
         }
         players = new ArrayList<Player>();
-        players.add(new HumanPlayer(playerOneHand));
-        players.add(new HumanPlayer(playerTwoHand));
-        players.add(new HumanPlayer(playerThreeHand));
+        players.add(new IAPlayer(playerOneHand));
+        players.add(new IAPlayer(playerTwoHand));
+        players.add(new IAPlayer(playerThreeHand));
         snake = new Snake();
 
         // Who starts?
@@ -81,6 +81,11 @@ public class Game {
                         System.out.println(String.format("%s is in the hand of the %dth player, he start.",
                                 domino.toString(), player_index + 1));
                         foundFirst = true;
+                        try {
+                            snake.layLeftEnd(domino);
+                        } catch (InvalidMoveException e){System.out.println("COCHON");}
+                        player.removeDomino(domino);
+                        player_index = (player_index + 1) % 3;
                         break;
                     }
                 }
@@ -126,7 +131,7 @@ public class Game {
         }
         System.out.println("\nGame over !");
         int winningPlayerIndex = checkScores();
-        System.out.println(String.format("Player %s won", winningPlayerIndex));
+        System.out.println(String.format("Player %s won", winningPlayerIndex + 1));
     }
 
     /**
@@ -181,6 +186,7 @@ public class Game {
                 if (next_move.side == Move.Side.LEFT) snake.layLeftEnd(next_move.domino);
                 else snake.layRightEnd(next_move.domino);
                 player.removeDomino(next_move.domino);
+                System.out.println(String.format("Player %s played %s", new int[]{3,1,2}[player_index], next_move));
                 correct_move = true;
             } catch (InvalidMoveException e){
                 System.out.println(String.format("Invalid move : %s", e.getMessage()));

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 /**
@@ -17,13 +18,14 @@ public class Game {
     static final byte DOMINO_MIN = 0;
     static final byte DRAW_SIZE = 7;
     private ArrayList<Player> players;
-    private int player_index;
+    private int player_index = 0;
     private Snake snake;
     public enum TurnResult{
         PASS,
         PLAY,
         WIN
     }
+    private int[] scores = {0,0,0};
 
     /**
      * Instantiates a new random Game
@@ -41,12 +43,29 @@ public class Game {
         setupGame(seed);
     }
 
+
     /**
      * sets up the game with the the given seed
      * @param seed
      */
     private void setupGame(int seed){
-        // Build the deck
+        LinkedList<Domino> deck = buildDeck();
+
+        Hand playerOneHand = new Hand();
+        Hand playerTwoHand = new Hand();
+        Hand playerThreeHand = new Hand();
+        players = new ArrayList<Player>();
+        players.add(new IAPlayer(playerOneHand));
+        players.add(new IAPlayer(playerTwoHand));
+        players.add(new IAPlayer(playerThreeHand));
+        snake = new Snake();
+    }
+
+    /**
+     * Build the domino deck
+     * @return LinkedList<Domino>
+     */
+    private LinkedList<Domino> buildDeck(){
         LinkedList<Domino> deck = new LinkedList<>();
         for (int i = DOMINO_MIN; i <= DOMINO_MAX; i++) {
             for (int j = i; j <= DOMINO_MAX; j++) {
@@ -54,24 +73,35 @@ public class Game {
                 deck.addLast(new Domino(vl));
             }
         }
-        // Draw hands
-        Collections.shuffle(deck, new Random(seed));
-        Hand playerOneHand = new Hand();
-        Hand playerTwoHand = new Hand();
-        Hand playerThreeHand = new Hand();
-        for (int i = 0; i < DRAW_SIZE; i++) {
-            playerOneHand.addDomino(deck.pop());
-            playerTwoHand.addDomino(deck.pop());
-            playerThreeHand.addDomino(deck.pop());
-        }
-        players = new ArrayList<Player>();
-        players.add(new IAPlayer(playerOneHand));
-        players.add(new IAPlayer(playerTwoHand));
-        players.add(new IAPlayer(playerThreeHand));
-        snake = new Snake();
+        return deck;
+    }
 
-        // Who starts?
-        player_index = 0;
+    /**
+     * Draw hand for all players
+     * @param deck LinkedList<Domino>
+     */
+    private void drawHands(LinkedList<Domino> deck) {
+        for (int i = 0; i < DRAW_SIZE; i++) {
+            for (Player player : players) {
+                player.hand.addDomino(deck.pop());
+            }
+        }
+    }
+
+    /**
+     * Empty hands for all players.
+     */
+    private void dropHands() {
+        for (Player player : players) {
+            player.hand.dominoes.clear();
+        }
+    }
+
+
+    /**
+     * Find who starts the first round and force the first move.
+     */
+    private void openingMove() {
         int[] lookFor = {DOMINO_MAX, DOMINO_MAX};
         boolean foundFirst = false;
         while(!foundFirst) {
@@ -109,29 +139,44 @@ public class Game {
     /**
      * Start the game and prompts player for their turn while no end game condition is met
      */
-    public void start(){
-        boolean ending = false;
+    public void start() {
+        boolean ending;
         int pass_count = 0;
-        while (!ending){
-            switch (nextTurn()){
-                case PASS:
-                    // if three players pass, nobody can play and the game should end
-                    pass_count++;
-                    if (pass_count == 3){
-                        ending=true;
-                    }
-                    break;
-                case WIN:
-                    ending = true;
-                    break;
-                case PLAY:
-                    pass_count = 0;
-                    break;
+        int winningPlayerIndex = 0;
+        while (!IntStream.of(scores).anyMatch(x -> x == 3)) {
+            ending = false;
+            drawHands(buildDeck());
+            if (Arrays.equals(scores, new int[]{0, 0, 0})) {
+                // For the first round, find who starts and force the first move
+                openingMove();
             }
+            while (!ending) {
+                switch (nextTurn()) {
+                    case PASS:
+                        // if three players pass, nobody can play and the game should end
+                        pass_count++;
+                        if (pass_count == 3) {
+                            ending = true;
+                        }
+                        break;
+                    case WIN:
+                        ending = true;
+                        break;
+                    case PLAY:
+                        pass_count = 0;
+                        break;
+                }
+            }
+            winningPlayerIndex = checkScores();
+            System.out.println(String.format("Player %d wins the round", winningPlayerIndex + 1));
+            scores[winningPlayerIndex] += 1;
+            snake.dominoes.clear();
+            snake.leftValue = 0;
+            snake.rightValue = 0;
+            dropHands();
         }
-        System.out.println("\nGame over !");
-        int winningPlayerIndex = checkScores();
-        System.out.println(String.format("Player %s won", winningPlayerIndex + 1));
+        System.out.println(String.format("Player %s won the game : ",
+                winningPlayerIndex + 1) + Arrays.toString(scores));
     }
 
     /**
